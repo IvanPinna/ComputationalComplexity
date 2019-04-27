@@ -1,0 +1,8 @@
+Cuando no aparezca el core escribe: 
+
+    sudo bash -c 'echo core.%e.%p > /proc/sys/kernel/core_pattern'
+
+Luego, para ver donde ha hecho el core generado tenemos que: 
+    g++ -g main.cpp Prim.cpp //Compilar con la opcion g
+    gdb ./a.out core //Cambiale antes el nombre al core.... para que sea solo core
+    luego en gdb escribe bt.
