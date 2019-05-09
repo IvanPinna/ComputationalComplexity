@@ -29,6 +29,25 @@
     tener el mismo color. 
     %¿Qué tipo de problema es este? Es de la clase NP-complete
     %Insertar el primer grafo de ejemplo.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{pictures/ejemplo.png}
+        \caption{twitterProductor.py}
+    \end{figure}
+	
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{pictures/ejemplobad.png}
+        \caption{twitterProductor.py}
+    \end{figure}
+
+	Concretamente, hemos empleado el grafo de Petersen
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{pictures/PetersenGraph.png}
+        \caption{twitterProductor.py}
+    \end{figure}
 
     Para encontrar la solución de este problema se ha empleado el problema 3-SAT. 
     %Explicar que es el problema 3-SAT
@@ -41,26 +60,18 @@
     \end{itemize}
 
     A continuación podemos ver una ecuación para el problema SAT:
-        \[Hola mundo!\]
+        \[ ( x_1 \vee x_2 \vee x_3) \wedge (x_3 \vee x_4)\]
 
     
-
 \section{Methodology}
-    La implementación de la práctica se ha realizado en C++, hemos dividido el programa en varias partes. La manera correcta
-    de llamar al algoritmo es: 
-        \[\]
-    Donde:
-    \begin{itemize}
-        \item Fuck
-    \end{itemize}
-
+    La implementación de la práctica se ha realizado en C++, hemos dividido el programa en varias partes.
     \subsubsection{Lectura del grafo}
         Para la lectura del grafo nos hemos apoyado en un fichero. Dicho fichero debe tener la siguiente estructura:
         \begin{itemize}
             \item La definición de cada nodo se realiza en una fila. 
             \item Los nodos a los que esta conectado el nodo que estamos definiendo estan separados por comas. 
         \end{itemize}
-
+        
         De esta manera realizamos la lectura del grafo, representado mediante listas de adyacencia.
         A continuación podemos ver el fichero con el grafo de ejemplo de la sección anterior.
         %Insertar fichero con el grafo de ejemplo.
