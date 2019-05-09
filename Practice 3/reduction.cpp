@@ -2,34 +2,11 @@
 #include <vector>
 #include <set>
 #include <fstream> 
+#include <sstream>
 #include <string>
 #include <cstdlib>
 
 using namespace std;
-
-struct pareja{
-    int a_, b_;
-    pareja(int a, int b):a_(a),b_(b)
-    {}
-    
-};
-
-bool operator<(const pareja& x, const pareja& y)
-{
-    return x.a_ < y.a_;
-}
-
-bool operator==(const pareja& x, const pareja& y)
-{
-    bool bandera = false;
-    if(x.a_ == y.a_ and x.b_ == y.b_)
-        bandera = true;
-    if(x.b_ == y.a_ and x.a_ == y.b_)
-        bandera = true;
-    if(x.a_ == y.b_ and x.b_ == y.a_)
-        bandera = true;
-    return bandera;
-}
 
 void visualizar_vectores(const vector<int>& nodos, const vector<vector<int>>& conexiones)
 {
@@ -85,31 +62,37 @@ int main()
 
   //Load de graph in memory from file.
   leer_fichero(nodos, conexiones);
+  /*
   cout << "VISUALIZANDO FICHERO" << endl;
   visualizar_vectores(nodos, conexiones);
   cout << "FIN VISUALIZACION" << endl;
+  */
+  
   //Write in format DIMACS the boolean equations
   int colores = 3;
   int num_var = nodos.size()*colores;
-  int incremento = 0;
+  int incremento = 0, ecuaciones = 0;
+  stringstream ss; //stream where i put the results equation before dumping in the file.
   
   //Each node must take only 1 color
   for(size_t i = 1; i <= num_var; i=i+colores)
   {
     for(size_t j = 0; j < colores; ++j)
-      cout << i + j << " ";
-    cout << "0" << endl;
-
+      ss << i + j << " ";
+    ss << "0" << endl;
+    ++ecuaciones;
     for(size_t j = i; j <= colores + incremento*colores; ++j)
     {
       for(size_t z = j+1; z <= colores + incremento*colores; ++z)
       {
-	cout << "-" << j << " " << "-" << z << " " << 0 << endl;
+	ss << "-" << j << " " << "-" << z << " " << 0 << endl;
+	++ecuaciones;
       }
     }
     ++incremento;
   }
-  
+
+  //cout << "Ecuaciones " << ecuaciones << endl;
 
   int left, right;
   //set<pareja> lista;
@@ -123,10 +106,17 @@ int main()
 	right = conexiones[i][j];
 	//if(lista.insert(pareja(left,right)).second) //The connection isn't written
 	//{
-	  for(size_t z = 1; z <= colores; ++z)
-	    cout << "-" << z + (left-1)*colores << " -" << z + (right-1)*colores
-		 << " 0" << endl;
-	//}
+	for(size_t z = 1; z <= colores; ++z){
+	  ss << "-" << z + (left-1)*colores << " -" << z + (right-1)*colores
+	       << " 0" << endl;
+	  ++ecuaciones;
+	}
       }
     }
+
+    //cout << "Ecuaciones " << ecuaciones << endl;
+    ofstream fs("salida");
+    fs << "p cnf " <<  num_var <<  " " <<  ecuaciones << "\n";
+    fs << ss.str();
+    fs.close();
 }
