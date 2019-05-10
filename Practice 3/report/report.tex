@@ -95,11 +95,7 @@
         Estas ecuaciones se pueden dividir en dos grupos.
         \begin{itemize}
             \item Ecuaciones correspondientes al color del propio nodo.
-            %Mostrar ecuacion booleana
-            \[\]
             \item Ecuaciones correspondientes al color de los nodos adyacentes al nodo actual.
-            \[\]
-            %Mostrar ecuacion booleana
         \end{itemize}
         %Remarcar que por eficiencia temporal las aristas se escriben dobles, cosa que no afecta a picosat.
         Si nos fijamos, en los grafos que hemos empleado las aristas son bidireccionales. Bastaría con definirlas una sola vez, 
@@ -119,15 +115,16 @@
         El programa ha sido paramétrizado de tal forma que tanto el grafo como el número de colores pueda modificarse.  
     
     \subsubsection{PicoSAT}
-        Finalmente, para ejecutar el programa hemos empleado la orden: 
-        \[./picosat salida\]
+        Finalmente, para ejecutar el programa hemos empleado la orden: \\
+         \vspace{5mm} $./picosat$ salida \\
 
-        Si deseamos ver todas las soluciones 
-        \[./picosat --all salida\]
+        Si deseamos ver todas las soluciones \\
+         \vspace{5mm} $./picosat$ --all salida
 
 
 \section{Results and Discussion}
-    Para averiguar el tipo de reducción obtenida hemos realizado un estudio de la complejidad temporal del programa. 
+    Para averiguar el tipo de reducción obtenida hemos realizado un estudio de la complejidad temporal del programa 3SAT (es decir, 
+    suponiendo que el numero de colores es 3). 
     \begin{figure}[H]
         \centering
         \includegraphics[width=1\textwidth]{pictures/analisis.png}
@@ -139,7 +136,7 @@
     Analizando el comportamiento de los bucles, vemos que el número de iteraciones depende de dos factores: 
     \begin{itemize}
         \item Número de nodos: n.
-        \item Número de colores: k.
+        \item Número de colores: en este caso es 3.
     \end{itemize}
     En primer anidamiento distinguimos 4 bucles for:
     \begin{itemize}
@@ -148,22 +145,40 @@
         \item for(size\_t j = 0; j $\leq$ colores + incremento*colores; ++j): Este bucle se ejecuta colores veces
         \item for(size\_t z = j+1; z $\leq$ colores + incremento*colores; ++z): Este bucle se ejecuta j-1 veces
     \end{itemize}
-
-
-    Por lo tanto, nuestro programa posee una complejidad polinómica. Consecuentemente hemos obtenido una reducción polinómica.
+    
+    Por tanto, la complejidad de la primera parte es 
+    \[t(n) = n(3+3*1) = n\]
+    Pasamos a analizar la segunda parte del algoritmo. Distinguimos los siguientes bucles
+    \begin{itemize}
+        \item for(size_t i = 0; i < nodos.size(); ++i): Se ejecuta n veces
+        \item for(size_t j = 0; j < conexiones[i].size(); ++j): Se ejecuta tantas veces como aristas tenga el grafo. En el caso peor (n-1) veces.
+        \item for(size_t z = 1; z <= colores; ++z): Se ejecuta 3 veces.
+    \end{itemize}
+    
+    Por tanto, la complejidad de la segunda parte es:
+    \[t(n) = n((n-1)*3) = n^2\]
+    
+    Fusionando ambas partes, por la regla del máximo tenemos que el algoritmo tiene un orden $O(n) = n^2$, es decir, posee un orden polinómico. Nuestro programa posee una complejidad polinómica. Consecuentemente hemos obtenido una reducción polinómica.
     Empleando tres colores, obtenemos las ecuaciones: 
     %Insertar fichero de ecuaciones. 
-    Una solución para el grafo de Petersen es esta: 
-
-    Así mismo, todas las posibles soluciones son: 
-        %Insertar la solución de las ecuaciones booleanas, no te compliques coloreando el grafo.
     
-    Si ahora reducimos el numero de colores a 2, obtenemos estas soluciones:
-    %Insertar fichero ecuaciones
-    Y como podemos observar, no existe ninguna solución.
-
-    Finalmente, analizando la estructura del grafo tenemos que el Clique Máximo del grafo de Petersen es de tamaño 2. Por ejemplo: 
-    %Mostrar un clique de tamaño 2 en el grafo de Petersen.
+    Una solución para el grafo de Petersen es esta: 
+    \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\textwidth]{pictures/solution.png}
+            \caption{Fichero de entrada para el grafo de Petersen}
+        \end{figure}
+        
+    Así mismo, todas las posibles soluciones son: 
+    %Insertar la solución de las ecuaciones booleanas, no te compliques coloreando el grafo.
+    \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\textwidth]{pictures/solution_all.png}
+            \caption{Fichero de entrada para el grafo de Petersen}
+    \end{figure}
+        
+    En cambio, no existe ninguna solución si decrementamos el numero de colores a 2.
+    Finalmente, analizando la estructura del grafo tenemos que el Clique Máximo del grafo de Petersen es de tamaño 2.  
 
 \section{Conclussion}
 El Clique máximo del grafo es 2. Así mismo no podemos colorear el grafo con menos de tres colores. Esto, intuitivamente nos sugiere que 
