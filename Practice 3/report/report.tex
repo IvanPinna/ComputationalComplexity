@@ -127,8 +127,29 @@
 
 
 \section{Results and Discussion}
-    Para averiguar el tipo de reducción obtenida hemos realizado un estudio de la complejidad temporal del programa: 
-        %Estudio teorico. 
+    Para averiguar el tipo de reducción obtenida hemos realizado un estudio de la complejidad temporal del programa. 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{pictures/analisis.png}
+        \caption{Análisis temporal del algoritmo}
+    \end{figure}
+    Como se puede observar, existen dos anidamientos de bucles for. Por tanto, hemos decidido dividir en análisis en dos bloques, 
+    cada uno correspondiente a un bloque de bucles for. 
+
+    Analizando el comportamiento de los bucles, vemos que el número de iteraciones depende de dos factores: 
+    \begin{itemize}
+        \item Número de nodos: n.
+        \item Número de colores: k.
+    \end{itemize}
+    En primer anidamiento distinguimos 4 bucles for:
+    \begin{itemize}
+        \item for(size\_t i = 1; i $\leq$ num\_var; i = i + colores): Este bucle se ejecuta n veces
+        \item for(size\_t j = 0; j $<$ colores; ++colores): Este bucle se ejecuta colores veces
+        \item for(size\_t j = 0; j $\leq$ colores + incremento*colores; ++j): Este bucle se ejecuta colores veces
+        \item for(size\_t z = j+1; z $\leq$ colores + incremento*colores; ++z): Este bucle se ejecuta j-1 veces
+    \end{itemize}
+
+
     Por lo tanto, nuestro programa posee una complejidad polinómica. Consecuentemente hemos obtenido una reducción polinómica.
     Empleando tres colores, obtenemos las ecuaciones: 
     %Insertar fichero de ecuaciones. 
