@@ -14,108 +14,104 @@
 
 \newpage
 \begin{abstract}
-    En esta práctica, realizaremos la implementación de una reducción polinomica. 
-    Concretamente, reduciremos el problema del coloreado de un grafo al problema
-    3-SAT. Una vez implementado nuestro programa, realizaremos análisis sobre su 
-    complejidad termporal, así como las relaciones entre el número de colores 
-    necesarios y el máximo clique del grafo. Se ha empleado el grafo de Petersen.
+    In this practice, we will make polynomial reduction implementation. Specifically oder in particular,
+    we will reduce the coloured graph to the 3-SAT problem. Once implemented our problem, we will make 
+    analysis about  temporal complexity, as well as relations between the number of colors required and the 
+    Maximum Click of the graph. The Petersen graph has been used.  
 \end{abstract}
 
 \newpage
 
 \section{Introduction}
-    En primer, lugar, comenzaremos hablando del coloreado de un grafo. Este problema
-    consiste en colorear un grafo de tal manera que dos vértices adyacentes no pueden 
-    tener el mismo color. 
-    %¿Qué tipo de problema es este? Es de la clase NP-complete
-    %Insertar el primer grafo de ejemplo.
+First, we start talking about coloring of graph. This problem consists in coloring a graph in such a way 
+that two adjacent vertices cannot have the same color.
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{pictures/ejemplo.png}
-        \caption{Grafo de ejemplo con una solución válida}
+        \caption{Example with a valid solution.}
     \end{figure}
 	
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{pictures/ejemplobad.png}
-        \caption{Grafo de ejemplo con una solución inválida}
+        \caption{Example graph with a invalid solution}
     \end{figure}
 
-	Concretamente, hemos empleado el grafo de Petersen. Hemos variado ligeramente 
-    la numeración de los nodos. Para mayor comodidad, el primer nodo lo hemos numerado como '1' en lugar de '0' y así sucesivamente (es decir, 
-    hemos incrementado en 1 el valor de cada nodo.)
+    In particular, we had used the Peterson graph. We have slightly varied the numberin of nodes. For 
+    convenience, the first node having been numbered "1", instead of "0" and so on (in other words, we 
+    have increased to 1 the value of each node).
 
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{pictures/PetersenGraph.png}
-        \caption{Grafo de Petersen}
+        \caption{Petersen Graph}
     \end{figure}
 
-    Para encontrar la solución de este problema se ha empleado el problema 3-SAT. 
-    El problema SAT fue uno de los primers en descubrirse NP-completo. Dicho problema consiste 
-    en dada una ecuación booleana, encontrar los valores para los cuales es verdadera. Además, la 
-    ecuación debe tener las siguientes características: 
+    To find the solution of this problem, has been used the 3-SAT problem. 
+    The SAT problem was one of the first to discover NP-complet.
+    This problem consists of given a Boolean equiation, finding the values for 
+    which it is true. In addition, the equiation must have the following characteristics:
+ 
     \begin{itemize}
-        \item La ecuación global se compone de ecuaciones enlazadas con la puerta logica and
-        \item Cada subecuación esta compuesta por variables ($x_1, x_2, ...$) unidas por la puerta lógica OR.
+        \item The global equation is composed of equiations linked to the logical gate AND.
+        \item Each subequation is composed of variables  ($x_1, x_2, ...$) joined by the logical door OR.
     \end{itemize}
 
-    A continuación podemos ver una ecuación para el problema SAT:
+    Below we can see an equation for the SAT problem:
         \[ ( x_1 \vee x_2 \vee x_3) \wedge (x_3 \vee x_4)\]
 
     
 \section{Methodology}
-    La implementación de la práctica se ha realizado en C++, hemos dividido el programa en varias partes. 
-    \subsubsection{Lectura del grafo}
-        Para la lectura del grafo nos hemos apoyado en un fichero. Dicho fichero debe tener la siguiente estructura:
+All implementations have been made in C++, we have divided the problem into several parts.
+    \subsubsection{Reading of the graph.}
+    For the reading of the graph we have relied on a file. This file must have the following structure:
         \begin{itemize}
-            \item La definición de cada nodo se realiza en una fila. 
-            \item Los nodos a los que esta conectado el nodo que estamos definiendo estan separados por comas. 
+            \item The definition of each node is done in a row.
+            \item The nodes to which the node we ar defining is connected are separated by commas.
         \end{itemize}
         
-        De esta manera realizamos la lectura del grafo, representado mediante listas de adyacencia.
-        A continuación podemos ver el fichero con el grafo de ejemplo de la sección anterior.
+        In this way we perform the reading of the graph, represented by adjacency lists. Next we can 
+        see the file wiht the example graph of the previous section.
         %Insertar fichero con el grafo de ejemplo.
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.2\textwidth]{pictures/entrada_ejemplo.png}
-            \caption{Fichero de entrada para el grafo de ejemplo}
+            \caption{Input file for the example graph}
         \end{figure}
 
-        De igual manera, el grafo de Petersen representado mediante listas de adyacencia. 
+        Similarly, the Petersen graph represented by adjacency lists. 
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.2\textwidth]{pictures/petersen_modificado.png}
-            \caption{Fichero de entrada para el grafo de Petersen}
+            \caption{Input file for the Petersen graph}
         \end{figure}
     
-    \subsubsection{Transformación del 3-Col to SAT}
-        Lo primero al realizar esta parte ha sido analizar profundamente la estructura de las ecuaciones booleanas que 
-        representan al grafo que deseamos colorear.
-        Estas ecuaciones se pueden dividir en dos grupos.
+    \subsubsection{Transformation 3-Col to SAT}
+    The first thing to do in this part was to deeply analyze the structure of the 
+    Boolean equiations that represent the graph we want to color. These equations can be divided into two groups.
         \begin{itemize}
-            \item Ecuaciones correspondientes al color del propio nodo.
-            \item Ecuaciones correspondientes al color de los nodos adyacentes al nodo actual.
+            \item Equations corresponding to the color of the node itself.
+            \item Equations corresponding to the color of the nodes adjacent to the current node.
         \end{itemize}
         %Remarcar que por eficiencia temporal las aristas se escriben dobles, cosa que no afecta a picosat.
-        Si nos fijamos, en los grafos que hemos empleado las aristas son bidireccionales. Bastaría con definirlas una sola vez, 
-        sin embargo, para mantener la legibilidad del código he decicido permitir que se escriban dos veces (una en cada sentido).
-        Este aumento en número de ecuaciones no afecta a PicoSAT. A continuación mostramos la salida para el grafo de Petersen 
+        If we look at the graphs we have used the edges are bidirectional. It would suffice to define them only once, 
+        however, to mantain the readability of the code I have decided to allow them to be written twice (one in each direction). 
+        This increase in number of equations does not affect PicoSAT. Next we show the output for the Petersen graph.
         %Insertar imagen grafo Petersen.
     
-    \subsubsection{Escritura de las ecuaciones booleanas}
-        Finalmente es necesario escribir en un fichero las ecuaciones correspondientes al grafo. Estas 
-        ecuaciones deben ir en formato DIMACS. El fin de este formato es el correcto procesamiento por parte del 
-        programa PicoSAT. 
+    \subsubsection{Writing boolen equations}
+        Finally, it is necessary to write in a file the equations corresponding to the graph. These equations should be in DIMACS format. 
+        The purpose of this format is the correct processing by the PicoSAT program.
 
-        Simplemente en lugar de ir mostrando las ecuaciones por la salida estándar las hemos dirigido hacia una cadena. Igualmente 
-        hemos definido una variable que se encarga de contar cuantas ecuaciones tiene y otra más para el número de variables. 
-        Volcando las cadenas y los contadores en un fichero conseguimos tener la información lista para PicoSAT.
+        Simply instead of showing the equations by the standard output we have directed them towards a string. 
+        We have also defined a variable that is responsible for counting how many equations it has and another 
+        variable for the number of variables. Turning the strings and the counters in a file we get to have the information ready 
+        for PicoSAT.
 
-        El programa ha sido paramétrizado de tal forma que tanto el grafo como el número de colores pueda modificarse.  
+        The program has been parametrized in such a way that both the graph and the number of colors can be modified.  
     
     \subsubsection{PicoSAT}
-        Finalmente, para ejecutar el programa hemos empleado la orden: \\
+        Finally, to execute the program we have used the orde: \\
          \vspace{5mm} $./picosat$ salida \\
 
         Si deseamos ver todas las soluciones \\
@@ -123,104 +119,107 @@
 
 
 \section{Results and Discussion}
-    Para averiguar el tipo de reducción obtenida hemos realizado un estudio de la complejidad temporal del programa 3SAT (es decir, 
-    suponiendo que el numero de colores es 3). 
+    To find out the type of reduction obtained, we have made a study of the temporal complexity 
+    of the 3SAT program (that is, assuming the number of colors is 3). 
     \begin{figure}[H]
         \centering
         \includegraphics[width=1\textwidth]{pictures/analisis.png}
-        \caption{Análisis temporal del algoritmo}
+        \caption{Temporal analysis of the algorithm}
     \end{figure}
-    Como se puede observar, existen dos anidamientos de bucles for. Por tanto, hemos decidido dividir en análisis en dos bloques, 
-    cada uno correspondiente a un bloque de bucles for. 
+    As you can see, there are two nests of for loops. Therefore, we have decided to 
+    divide in analysis into two blocks, each corresponding to a block of for loops. 
 
-    Analizando el comportamiento de los bucles, vemos que el número de iteraciones depende de dos factores: 
+    Analyzing the behavior of the loops, we see tat the number of iterationes depends on two factors:
     \begin{itemize}
-        \item Número de nodos: n.
-        \item Número de colores: en este caso es 3.
+        \item Number of nodes: n.
+        \item Number of colors: in this case it is 3.
     \end{itemize}
-    En primer anidamiento distinguimos 4 bucles for:
+
+    At first nesting we distinguish 4 loops for:
     \begin{itemize}
-        \item for(size\_t i = 1; i $\leq$ num\_var; i = i + colores): Este bucle se ejecuta n veces
-        \item for(size\_t j = 0; j $<$ colores; ++colores): Este bucle se ejecuta colores veces
-        \item for(size\_t j = 0; j $\leq$ colores + incremento*colores; ++j): Este bucle se ejecuta colores veces
-        \item for(size\_t z = j+1; z $\leq$ colores + incremento*colores; ++z): Este bucle se ejecuta j-1 veces
+        \item for(size\_t i = 1; i $\leq$ num\_var; i = i + colores): this loop is executed n times.
+        \item for(size\_t j = 0; j $<$ colores; ++colores): this loop is executed colors times
+        \item for(size\_t j = 0; j $\leq$ colores + incremento*colores; ++j): this loop is executed colors times
+        \item for(size\_t z = j+1; z $\leq$ colores + incremento*colores; ++z): this loop is executed j-1 times
     \end{itemize}
     
-    Por tanto, la complejidad de la primera parte es 
+    Therefore, the complexity of the first part is: 
     \[t(n) = n(3+3*1) = n\]
-    Pasamos a analizar la segunda parte del algoritmo. Distinguimos los siguientes bucles
+    We now analyze the second part of the algorithm. We distinguish the following loops:
     \begin{itemize}
-        \item for(size\_t i = 0; i < nodos.size(); ++i): Se ejecuta n veces
-        \item for(size\_t j = 0; j < conexiones[i].size(); ++j): Se ejecuta tantas veces como aristas tenga el grafo. En el caso peor (n-1) veces.
-        \item for(size\_t z = 1; z <= colores; ++z): Se ejecuta 3 veces.
+        \item for(size\_t i = 0; i < nodos.size(); ++i): it is executed n times.
+        \item for(size\_t j = 0; j < conexiones[i].size(); ++j): it is executed as many times as edges have the graph. In the worst case (n-1) times.
+        \item for(size\_t z = 1; z <= colores; ++z): it is executed 3 times.
     \end{itemize}
     
-    Por tanto, la complejidad de la segunda parte es:
+    Therefore, the compexity of the second part is:
     \[t(n) = n((n-1)*3) = n^2\]
     
-    Fusionando ambas partes, por la regla del máximo tenemos que el algoritmo tiene un orden $O(n) = n^2$, es decir, posee un orden polinómico. Nuestro programa posee una complejidad polinómica. Consecuentemente hemos obtenido una reducción polinómica.
-    Empleando tres colores, obtenemos las ecuaciones: 
+    Fusionando ambas partes, por la regla del máximo tenemos que el algoritmo tiene un orden $O(n) = n^2$, es decir, posee un orden polinómico. 
+    Nuestro programa posee una complejidad polinómica. Consecuentemente hemos obtenido una reducción polinómica.
+
     %Insertar fichero de ecuaciones. 
     
-    Una solución para el grafo de Petersen es esta: 
+    A solution for the Peterson graph with three colors is this:
     \begin{figure}[H]
             \centering
-            \includegraphics[width=0.5\textwidth]{pictures/solution.png}
-            \caption{Fichero de entrada para el grafo de Petersen}
+            \includegraphics[width=0.8\textwidth]{pictures/solution.png}
+            \caption{Solution for the Petersen graph}
         \end{figure}
         
-    Así mismo, todas las posibles soluciones son: 
+    Likewise, two solutions are: 
     %Insertar la solución de las ecuaciones booleanas, no te compliques coloreando el grafo.
     \begin{figure}[H]
             \centering
-            \includegraphics[width=0.5\textwidth]{pictures/solution_all.png}
-            \caption{Fichero de entrada para el grafo de Petersen}
+            \includegraphics[width=0.8\textwidth]{pictures/solution_all.png}
+            \caption{Two solutions for the Petersen graph}
     \end{figure}
         
-    En cambio, no existe ninguna solución si decrementamos el numero de colores a 2.
-    Finalmente, analizando la estructura del grafo tenemos que el Clique Máximo del grafo de Petersen es de tamaño 2.  
+    On the other hand, there is no solution if we decrease the number of colors to 2. Finally, 
+    analyzing the structure of the graph we have that the Maximum Clique of the graph of Petersen is of size 2.
+ 
+ 
 
-    El Clique máximo del grafo es 2. Así mismo no podemos colorear el grafo con menos de tres colores. Esto, intuitivamente nos sugiere que 
-    \[clique < numero_colores\]
+    The Maximum Clique of the graph is 2.  Furthermore we can not color the graph with less than three colors. This, intuitively suggests that:
+    \[clique < numero\_colores\]
 
-Siendo clique el numero de nodos que forman el máximo clique y numero\_colores el número 
-de colores mínimo necesario para colorear el grafo. Ahora a 
-fin de contrastar esta suposición, decidimos probar con el grafo de ejemplo que hemos mostrado al principio del report. 
-%Insertar imagen 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\textwidth]{pictures/ejemplo.png}
-    \caption{Grafo de ejemplo}
-\end{figure}
+    By clique the number of nodes that form the maximum clique and number\_colors the minimum number needed to color the graph. 
+    Now in order to contrast this assumption, we decided to try the sample graph we have shown at the beginning of the report
+    %Insertar imagen 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{pictures/ejemplo.png}
+        \caption{Example graph}
+    \end{figure}
 
-Aquí, sin embargo, el clique máximo del grafo es 3 y se puede colorear correctamente con tres colores. Por tanto tenemos que:
-    \[clique \leq numero_colores\]
+    Here, however, the maximum clique of the graph is 3 and it can be colored correctly with three colors. Therefore we have to:
+    \[clique \leq numero\_colores\]
     
-Consecuentemente, realizamos un intento de colorear el grafo de Petersen con dos colores 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\textwidth]{pictures/interior.png}
-    \caption{Interior del grafo de Petersen}
-\end{figure}
+    Consequently, we made an attemplt to color the Petersen graph with two colors
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{pictures/interior.png}
+        \caption{Interior del grafo de Petersen}
+    \end{figure}
 
-No ha hecho falta colorear todo el grafo, trabajando únicamente con el interior podemos observar que no es coloreable con sólo dos colores, el nodo
-numero 9 no puede tomar ni rojo ni verde.   
+    It was not necessary to color the whole graph, working only with the inside we can see that it is not colorable with only 
+    two colors, the  node number 9 can not take neither red nor green.   
 
 
 \section{Conclussion}
-Como hemos podido comprobar, se puede realizar una reducción polinomica del problema del coloreado de un grafo a SAT. Este hecho afirma
-que los problemas NP-Complete contienen a todos los problemas perteneciente a la clase NP.
+As we have been able to verify, a polinomic reduction of the problem of the coloring of a graph to SAT can be realized. 
+This fact states that the NP-Complete problems contain all the problems belonging to the NP class.
 
-Por otra parte, respecto a la relación entre el Clique y el número máximo de colores, se llega a la conclusión que no solo el clique influye en 
-el número mínimo de colores necesario. También lo hace la estructura del grafo. Si quereremos ceñirnos estrictamente al Clique 
-para estimar el número de colores, tenemos que 
-    \[clique < numero_colores \] 
+On the other hand, regarding the relation between the Clique and the maximum number of colors, it is concluded that not 
+only the Clique influences the maximum number of colors needed. So does the structure of the graph. If we want to stick 
+strictly to the Clique to estimate the number of colors, we have to: 
+    \[clique < numero\_colores \] 
 
-Aunque en algunos casos, cuando la estructura del grafo lo permita, es posible que se cumpla: 
-    \[clique \leq numero_colores\]
+Although in some cases, when the structure of the graph allows it, it is possible that be fulfilled oder be accomplished: 
+    \[clique \leq numero\_colores\]
 
-Consecuentemente, si existiera en el grafo un clique de tamaño 4, no sería posible colorear el grafo con únicamente 3 colores. Este hecho es 
-fácilmente razonable por otra parte ya que si existe un clique de tamaño 4, existen vértices (al menos 4), que tendrán tres vértices adyacentes.
+    Consequently, if there was a Clique of size 4 in the graph, it would not be possible to color the graph with only 3 colors. 
+    This fact is easily reasonable, on the other hand since if there is a Clique of size 4, there are vertexes (al least 4), which will have three adjacent vertexes.
 
 \section{Bibliografia}
 \begin{itemize}
