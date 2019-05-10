@@ -157,9 +157,25 @@ fin de contrastar esta suposición, decidimos probar con el grafo de ejemplo que
     \includegraphics[width=0.5\textwidth]{pictures/ejemplo.png}
     \caption{Grafo de ejemplo}
 \end{figure}
-Aquí, sin embargo, el clique máximo del grafo es 3 y se puede colorear correctamente con tres colores. Por tanto
-    \[clique \leq numero_colores\]
 
+Aquí, sin embargo, el clique máximo del grafo es 3 y se puede colorear correctamente con tres colores. Por tanto tenemos que:
+    \[clique \leq numero_colores\]
+    
+Consecuentemente, realizamos un intento de colorear el grafo de Petersen con dos colores 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{pictures/interior.png}
+    \caption{Interior del grafo de Petersen}
+\end{figure}
+
+No ha hecho falta colorear todo el grafo, trabajando únicamente con el interior podemos observar que no es coloreable con sólo dos colores.  
+Por tanto la estructura del grafo también influye en el número mínimo de colores necesarios. Si quereremos ceñirnos estrictamente al Clique 
+para estimar el número de colores, tenemos que 
+    \[clique < numero_colores \] 
+
+Aunque en algunos casos es posible que se cumpla: 
+    \[clique \leq numero_colores\]
+    
 \bibliography{bibliografia} 
 \bibliographystyle{unsrt}
 
