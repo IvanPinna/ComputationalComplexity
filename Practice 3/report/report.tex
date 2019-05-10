@@ -78,14 +78,14 @@
         %Insertar fichero con el grafo de ejemplo.
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.5\textwidth]{pictures/patito.png}
+            \includegraphics[width=0.2\textwidth]{pictures/entrada_ejemplo.png}
             \caption{Fichero de entrada para el grafo de ejemplo}
         \end{figure}
 
         De igual manera, el grafo de Petersen representado mediante listas de adyacencia. 
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.5\textwidth]{pictures/patito.png}
+            \includegraphics[width=0.2\textwidth]{pictures/petersen_modificado.png}
             \caption{Fichero de entrada para el grafo de Petersen}
         \end{figure}
     
@@ -150,9 +150,9 @@
     \[t(n) = n(3+3*1) = n\]
     Pasamos a analizar la segunda parte del algoritmo. Distinguimos los siguientes bucles
     \begin{itemize}
-        \item for(size_t i = 0; i < nodos.size(); ++i): Se ejecuta n veces
-        \item for(size_t j = 0; j < conexiones[i].size(); ++j): Se ejecuta tantas veces como aristas tenga el grafo. En el caso peor (n-1) veces.
-        \item for(size_t z = 1; z <= colores; ++z): Se ejecuta 3 veces.
+        \item for(size\_t i = 0; i < nodos.size(); ++i): Se ejecuta n veces
+        \item for(size\_t j = 0; j < conexiones[i].size(); ++j): Se ejecuta tantas veces como aristas tenga el grafo. En el caso peor (n-1) veces.
+        \item for(size\_t z = 1; z <= colores; ++z): Se ejecuta 3 veces.
     \end{itemize}
     
     Por tanto, la complejidad de la segunda parte es:
@@ -180,8 +180,7 @@
     En cambio, no existe ninguna solución si decrementamos el numero de colores a 2.
     Finalmente, analizando la estructura del grafo tenemos que el Clique Máximo del grafo de Petersen es de tamaño 2.  
 
-\section{Conclussion}
-El Clique máximo del grafo es 2. Así mismo no podemos colorear el grafo con menos de tres colores. Esto, intuitivamente nos sugiere que 
+    El Clique máximo del grafo es 2. Así mismo no podemos colorear el grafo con menos de tres colores. Esto, intuitivamente nos sugiere que 
     \[clique < numero_colores\]
 
 Siendo clique el numero de nodos que forman el máximo clique y numero\_colores el número 
@@ -204,13 +203,17 @@ Consecuentemente, realizamos un intento de colorear el grafo de Petersen con dos
     \caption{Interior del grafo de Petersen}
 \end{figure}
 
-No ha hecho falta colorear todo el grafo, trabajando únicamente con el interior podemos observar que no es coloreable con sólo dos colores.  
+No ha hecho falta colorear todo el grafo, trabajando únicamente con el interior podemos observar que no es coloreable con sólo dos colores, el nodo
+numero 9 no puede tomar ni rojo ni verde.   
 Por tanto la estructura del grafo también influye en el número mínimo de colores necesarios. Si quereremos ceñirnos estrictamente al Clique 
 para estimar el número de colores, tenemos que 
     \[clique < numero_colores \] 
 
 Aunque en algunos casos es posible que se cumpla: 
     \[clique \leq numero_colores\]
+
+\section{Conclussion}
+
     
 \bibliography{bibliografia} 
 \bibliographystyle{unsrt}
