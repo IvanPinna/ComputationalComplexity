@@ -205,17 +205,28 @@ Consecuentemente, realizamos un intento de colorear el grafo de Petersen con dos
 
 No ha hecho falta colorear todo el grafo, trabajando únicamente con el interior podemos observar que no es coloreable con sólo dos colores, el nodo
 numero 9 no puede tomar ni rojo ni verde.   
-Por tanto la estructura del grafo también influye en el número mínimo de colores necesarios. Si quereremos ceñirnos estrictamente al Clique 
+
+
+\section{Conclussion}
+Como hemos podido comprobar, se puede realizar una reducción polinomica del problema del coloreado de un grafo a SAT. Este hecho afirma
+que los problemas NP-Complete contienen a todos los problemas perteneciente a la clase NP.
+
+Por otra parte, respecto a la relación entre el Clique y el número máximo de colores, se llega a la conclusión que no solo el clique influye en 
+el número mínimo de colores necesario. También lo hace la estructura del grafo. Si quereremos ceñirnos estrictamente al Clique 
 para estimar el número de colores, tenemos que 
     \[clique < numero_colores \] 
 
-Aunque en algunos casos es posible que se cumpla: 
+Aunque en algunos casos, cuando la estructura del grafo lo permita, es posible que se cumpla: 
     \[clique \leq numero_colores\]
 
-\section{Conclussion}
+Consecuentemente, si existiera en el grafo un clique de tamaño 4, no sería posible colorear el grafo con únicamente 3 colores. Este hecho es 
+fácilmente razonable por otra parte ya que si existe un clique de tamaño 4, existen vértices (al menos 4), que tendrán tres vértices adyacentes.
 
-    
-\bibliography{bibliografia} 
-\bibliographystyle{unsrt}
+\section{Bibliografia}
+\begin{itemize}
+    \item Kleinberg, Jon; Tardos, Éva Tardos (2006). Algorithm Design. Pearson Education. pp. 452–453. ISBN 978-0-321-37291-8.
+    \item Goldreich, Oded (2008), Computational Complexity: A Conceptual Perspective, Cambridge University Press, pp. 59–60, ISBN 9781139472746
+    \item  Garey, Michael R.; Johnson, D. S. (1979), Computers and Intractability: A Guide to the Theory of NP-Completeness, W. H. Freeman
+\end{itemize} 
 
 \end{document}
