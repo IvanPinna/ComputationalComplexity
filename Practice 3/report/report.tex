@@ -32,25 +32,26 @@
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{pictures/ejemplo.png}
-        \caption{twitterProductor.py}
+        \caption{Grafo de ejemplo con una solución válida}
     \end{figure}
 	
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{pictures/ejemplobad.png}
-        \caption{twitterProductor.py}
+        \caption{Grafo de ejemplo con una solución inválida}
     \end{figure}
 
-	Concretamente, hemos empleado el grafo de Petersen
+	Concretamente, hemos empleado el grafo de Petersen. Hemos variado ligeramente 
+    la numeración de los nodos. Para mayor comodidad, el primer nodo lo hemos numerado como '1' en lugar de '0' y así sucesivamente (es decir, 
+    hemos incrementado en 1 el valor de cada nodo.)
 
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{pictures/PetersenGraph.png}
-        \caption{twitterProductor.py}
+        \caption{Grafo de Petersen}
     \end{figure}
 
     Para encontrar la solución de este problema se ha empleado el problema 3-SAT. 
-    %Explicar que es el problema 3-SAT
     El problema SAT fue uno de los primers en descubrirse NP-completo. Dicho problema consiste 
     en dada una ecuación booleana, encontrar los valores para los cuales es verdadera. Además, la 
     ecuación debe tener las siguientes características: 
@@ -64,7 +65,7 @@
 
     
 \section{Methodology}
-    La implementación de la práctica se ha realizado en C++, hemos dividido el programa en varias partes.
+    La implementación de la práctica se ha realizado en C++, hemos dividido el programa en varias partes. 
     \subsubsection{Lectura del grafo}
         Para la lectura del grafo nos hemos apoyado en un fichero. Dicho fichero debe tener la siguiente estructura:
         \begin{itemize}
@@ -75,6 +76,18 @@
         De esta manera realizamos la lectura del grafo, representado mediante listas de adyacencia.
         A continuación podemos ver el fichero con el grafo de ejemplo de la sección anterior.
         %Insertar fichero con el grafo de ejemplo.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\textwidth]{pictures/patito.png}
+            \caption{Fichero de entrada para el grafo de ejemplo}
+        \end{figure}
+
+        De igual manera, el grafo de Petersen representado mediante listas de adyacencia. 
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\textwidth]{pictures/patito.png}
+            \caption{Fichero de entrada para el grafo de Petersen}
+        \end{figure}
     
     \subsubsection{Transformación del 3-Col to SAT}
         Lo primero al realizar esta parte ha sido analizar profundamente la estructura de las ecuaciones booleanas que 
@@ -82,9 +95,17 @@
         Estas ecuaciones se pueden dividir en dos grupos.
         \begin{itemize}
             \item Ecuaciones correspondientes al color del propio nodo.
+            %Mostrar ecuacion booleana
+            \[\]
             \item Ecuaciones correspondientes al color de los nodos adyacentes al nodo actual.
+            \[\]
+            %Mostrar ecuacion booleana
         \end{itemize}
         %Remarcar que por eficiencia temporal las aristas se escriben dobles, cosa que no afecta a picosat.
+        Si nos fijamos, en los grafos que hemos empleado las aristas son bidireccionales. Bastaría con definirlas una sola vez, 
+        sin embargo, para mantener la legibilidad del código he decicido permitir que se escriban dos veces (una en cada sentido).
+        Este aumento en número de ecuaciones no afecta a PicoSAT. A continuación mostramos la salida para el grafo de Petersen 
+        %Insertar imagen grafo Petersen.
     
     \subsubsection{Escritura de las ecuaciones booleanas}
         Finalmente es necesario escribir en un fichero las ecuaciones correspondientes al grafo. Estas 
@@ -95,7 +116,7 @@
         hemos definido una variable que se encarga de contar cuantas ecuaciones tiene y otra más para el número de variables. 
         Volcando las cadenas y los contadores en un fichero conseguimos tener la información lista para PicoSAT.
 
-        El programa ha sido paramétrizado de tal forma que tanto el grafo como el número de colores pueda modificarse. 
+        El programa ha sido paramétrizado de tal forma que tanto el grafo como el número de colores pueda modificarse.  
     
     \subsubsection{PicoSAT}
         Finalmente, para ejecutar el programa hemos empleado la orden: 
@@ -109,18 +130,36 @@
     Para averiguar el tipo de reducción obtenida hemos realizado un estudio de la complejidad temporal del programa: 
         %Estudio teorico. 
     Por lo tanto, nuestro programa posee una complejidad polinómica. Consecuentemente hemos obtenido una reducción polinómica.
+    Empleando tres colores, obtenemos las ecuaciones: 
+    %Insertar fichero de ecuaciones. 
     Una solución para el grafo de Petersen es esta: 
 
     Así mismo, todas las posibles soluciones son: 
         %Insertar la solución de las ecuaciones booleanas, no te compliques coloreando el grafo.
     
-    Analizando el grafo, concluimos que el Clique Máximo del grafo de Petersen es de tamaño 2. Por ejemplo: 
-        %Mostrar un clique de tamaño 2 en el grafo de Petersen. 
-    
-    
+    Si ahora reducimos el numero de colores a 2, obtenemos estas soluciones:
+    %Insertar fichero ecuaciones
+    Y como podemos observar, no existe ninguna solución.
 
+    Finalmente, analizando la estructura del grafo tenemos que el Clique Máximo del grafo de Petersen es de tamaño 2. Por ejemplo: 
+    %Mostrar un clique de tamaño 2 en el grafo de Petersen.
 
 \section{Conclussion}
+El Clique máximo del grafo es 2. Así mismo no podemos colorear el grafo con menos de tres colores. Esto, intuitivamente nos sugiere que 
+    \[clique < numero_colores\]
+
+Siendo clique el numero de nodos que forman el máximo clique y numero\_colores el número 
+de colores mínimo necesario para colorear el grafo. Ahora a 
+fin de contrastar esta suposición, decidimos probar con el grafo de ejemplo que hemos mostrado al principio del report. 
+%Insertar imagen 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{pictures/ejemplo.png}
+    \caption{Grafo de ejemplo}
+\end{figure}
+Aquí, sin embargo, el clique máximo del grafo es 3 y se puede colorear correctamente con tres colores. Por tanto
+    \[clique \leq numero_colores\]
+
 \bibliography{bibliografia} 
 \bibliographystyle{unsrt}
 
