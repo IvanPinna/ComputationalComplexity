@@ -1,0 +1,14 @@
+Colonia de hormigas:
+Ventajas
+    - Más intuitivo
+    - No existen mutaciones, sino que se va empleando la ruta que mas 
+    se utiliza.
+Inconvenientes
+
+
+Algoritmo Genético.
+Ventajas 
+    - Mayor número de paramétros, lo cuál nos permite adaptar el comportamiento 
+    del algoritmo al problema TSP.
+
+Inconvenientes
