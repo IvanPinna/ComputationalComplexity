@@ -24,7 +24,8 @@ struct ciudad{
   }
 };
 
-int main(){
+vector<ciudad> lectura_mapa(const string& nombre)
+{
   ifstream fe("kroA100.tsp");
   string str;
   regex reg("[0-9]+");
@@ -33,22 +34,28 @@ int main(){
   int contador = 0, id, tope;
   vector<ciudad> ciudades;
   float x, y;
+    
   for(int i = 0; i < 7; ++i) //Burn the first six lines
     getline(fe, str);
 
-  while(!regex_search(str, endfile))
-  {
-    sregex_iterator it(str.begin(), str.end(), reg);
-
-    id =  stoi((*it).str()); 
-    x =  stoi((*(++it)).str());  
-    y = stoi((*(++it)).str());
-
-    ciudades.push_back(ciudad(id, x, y));
-    ciudades.at(contador).imprimir();
-    getline(fe, str);
-    ++contador;
-  }
-
+  while(!regex_search(str, endfile)){
+      sregex_iterator it(str.begin(), str.end(), reg);
+      id =  stoi((*it).str()); 
+      x =  stoi((*(++it)).str());  
+      y = stoi((*(++it)).str());
+      
+      ciudades.push_back(ciudad(id, x, y));
+      ciudades.at(contador).imprimir();
+      getline(fe, str);
+      ++contador;
+    }
+    
   fe.close();
+  return ciudades;
+}
+
+int main(){
+  string nombre = "kroA100.tsp";
+  vector<ciudad> nodos = lectura_mapa(nombre);
+  
 }
