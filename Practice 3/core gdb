@@ -4,5 +4,7 @@ Cuando no aparezca el core escribe:
 
 Luego, para ver donde ha hecho el core generado tenemos que: 
     g++ -g main.cpp Prim.cpp //Compilar con la opcion g
-    gdb ./a.out core //Cambiale antes el nombre al core.... para que sea solo core
+    ./a.out         //Para generar el core
+    gdb ./a.out core_generado. //Con esto ya se ve donde ha cascado
+    
     luego en gdb escribe bt.
