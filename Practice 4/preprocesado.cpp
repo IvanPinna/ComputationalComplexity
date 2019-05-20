@@ -4,7 +4,7 @@
 #include <regex>
 #include <vector>
 #include <math.h>
-
+#include <limits> 
 
 using namespace std;
 
@@ -26,10 +26,16 @@ struct ciudad{
   }
 };
 
-struct candidate{
-  vector<int> orden;
-  double coste;
-}
+struct gen{
+  vector<int> sequence_;
+  double cost_;
+
+  gen(vector<int> sequence):sequence_(sequence), cost_(-1) //Ojo con el -1
+  {}
+  
+  gen()
+  {}
+};
 
 vector<ciudad> lectura_mapa(const string& nombre)
 {
@@ -61,31 +67,31 @@ vector<ciudad> lectura_mapa(const string& nombre)
   return ciudades;
 }
 
-vector<int> generar_poblacion(int tam)
-{
-  cout << "Tam " << "<- " << tam << endl;
-  srand(time(NULL));
-  //Falta inicializar semilla con los segundos del sistema. 
-  bool *posiciones = new bool[tam];
-  vector<int> resultado;
-  int contador = 0, aleatorio;
 
-  for(int i = 0; i < tam; ++i)
-    posiciones[i] = false;
+gen generar_elemento(int ciudades)
+{
+  vector<int> array, solucion;
+  int aleatorio;
   
-  while(contador < tam)
-  {
-    aleatorio = rand()%tam + 1; //Numeros entre 1 y tam
-    if(!posiciones[aleatorio])
-      {
-	resultado.push_back(aleatorio);
-	posiciones[aleatorio] = true;
-	contador++;
-      }
+  for(int i = 0; i < ciudades; ++i)
+    array.push_back(i);
+
+  while(array.size() > 0){
+    aleatorio = rand()%array.size(); //Genera valores entre 0 y tam.
+    solucion.push_back(array[aleatorio]);
+    array.erase(array.begin() + aleatorio); //Borramos posicion del array. 
   }
-  
-  delete posiciones;
-  return resultado;
+  return gen(solucion); 
+}
+
+vector<gen> generar_poblacion(int tam_poblacion, int ciudades)
+{
+  vector<gen> poblacion;
+  srand(time(NULL));
+  for(int i = 0; i < tam_poblacion; ++i)
+    poblacion.push_back(generar_elemento(ciudades));
+
+  return poblacion;
 }
 
 double euclidea(const ciudad& c1, const ciudad& c2)
@@ -93,25 +99,43 @@ double euclidea(const ciudad& c1, const ciudad& c2)
   return sqrt(pow(c2.x_ - c1.x_ , 2) + pow(c2.y_ - c1.y_, 2));
 }
 
-double evaluacion(const vector<ciudad>& nodos, const vector<int>& orden)
+void evaluate_population(const vector<ciudad>& ciudades, vector<gen>& poblacion)
 {
-  double resultado = 0;
-  ciudad c1, c2;
-  //Calcular la distancia entre las distintas ciudades.
-  for(int i = 0; i < orden.size()-1; ++i)
-    resultado += euclidea(nodos.at(orden.at(i)-1),nodos.at(orden.at(i+1)-1));
+  vector<int> sequence;
+  double distance;
+  for(unsigned i = 0; i < poblacion.size(); ++i)
+  {
+    sequence = poblacion[i].sequence_;
+    distance = 0; 
+    //Calculate distance for each ciudad1 - ciudad2
+    for(int i = 0; i < sequence.size()-1;++i)
+    {
+      distance += euclidea(ciudades.at(sequence.at(i)),
+			   ciudades.at(sequence.at(i+1))); 
+    }
+ 
+    //Calculate distance for ciudadn -> ciudad1
+    distance += euclidea(ciudades.at(sequence.at(sequence.size()-1)),
+			  ciudades.at(sequence.at(0)));
 
-  //Calcular distancia entre última ciudad y la primera.
-  resultado += euclidea(nodos.at(orden.at(0)),
-			nodos.at(orden.at(orden.size()-1)));
-
-  resultado += euclidea(c1,c2);
-
-  c1.imprimir(); c2.imprimir();
-  cout << "Resultado " << resultado << endl;
-  
-  return resultado;
+    poblacion.at(i).cost_ = distance;
+  }
 }
+
+
+double get_best_solutionp(const vector<gen>& population)
+{
+  double result = numeric_limits<double>::max();
+  for(unsigned i = 0; i < population.size(); ++i)
+  {
+    if(population.at(i).cost_ < result)
+      result = population.at(i).cost_; 
+  }
+
+  return result;
+}
+
+
 /***
  population_size -> Tamaño de la población
  population -> vector con los candidatos (posibles soluciones)
@@ -120,15 +144,18 @@ double evaluacion(const vector<ciudad>& nodos, const vector<int>& orden)
 int main(){
   string nombre = "kroA100.tsp";
   vector<ciudad> nodos = lectura_mapa(nombre);
-  int population_size = 10, iteraciones = 0; //Numero de soluciones.
-  vector<candidate> population = generar_poblacion(nodos.size());
-  vector<int> mejor = get_best_solution(population);
+  int population_size = 1000, s_best; //, iteraciones = 0; //Numero de soluciones.
+  vector<gen> population = generar_poblacion(population_size, nodos.size());
+  evaluate_population(nodos, population);
+  s_best = get_best_solution(population);
+
+  /*
   //evaluacion(nodos, orden);
-  
   while(iteraciones < 100) //Condicion de parada
   {
     parents = selectParents(population, population_size);
     ++iteraciones;
   }
-  
+
+  */
 }
