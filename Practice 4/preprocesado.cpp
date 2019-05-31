@@ -147,7 +147,7 @@ double get_best_solution(const vector<gen>& population)
   return result;
 }
 
-//FALTA ADAPTAR ESTA FUNCION AL CODIGO
+
 vector<pareja> selectParents(const vector<gen>& genes, int num_parejas){
     vector<pareja> parejas; //Aqui dentro va el coste de cada ciudad. 
     vector<int> seleccionado;
@@ -200,7 +200,8 @@ vector<pareja> selectParents(const vector<gen>& genes, int num_parejas){
     //Agrupamos en parejas los elementos seleccionados.
     for(int i = 0; i < num_parejas*2; i+=2)
     {
-        cout << "Pareja -> " << seleccionado[i] << "," << seleccionado[i+1] << endl;
+        cout << "Pareja -> " << seleccionado[i] << ","
+	     << seleccionado[i+1] << endl;
         parejas.push_back(pareja(seleccionado[i], seleccionado[i+1]));
     }
     
@@ -208,6 +209,12 @@ vector<pareja> selectParents(const vector<gen>& genes, int num_parejas){
     return parejas;    
 }
 
+gen SCX(const gen& padre, const gen& madre)
+{
+  gen hijo;
+
+  return hijo; 
+}
 
 /***
  population_size -> Tamaño de la población
@@ -224,9 +231,23 @@ int main(){
   cout << s_best << endl;
   
   int iteraciones = 0;
+  vector<pareja> parejas;
+  vector<gen> hijos;
+  gen hijo;
   while(iteraciones < 1) //Condicion de parada
   {
-    selectParents(population, population_size);
+    parejas = selectParents(population, population_size);
     ++iteraciones;
+    for(unsigned i = 0; i < parejas.size();++i)
+    {
+      //cout << parejas.at(i).x_ << "," << parejas.at(i).y_ << endl;
+      //cout << population.at(parejas.at(i).x_).cost_ << endl;
+      hijo = SCX(population.at(parejas.at(i).x_),
+		 population.at(parejas.at(i).y_));
+      //mutate(hijo);
+      //hijos.append(hijo); //Añadimos el hijo a la poblacion de hijos. 
+    }
+      
+		       
   }
 }
