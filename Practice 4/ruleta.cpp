@@ -6,11 +6,18 @@
 using namespace std;
 
 struct pareja{
-    int father, mother;
+    int x_, y_;
+    
+    pareja(int x, int y):x_(x), y_(y)
+    {}
+    
+    pareja()
+    {}
 };
 
-vector<pareja> selectParents(vector<int> ciudades, int num_parejas){
+vector<pareja> selectParents(const vector<int>& ciudades, int num_parejas){
     vector<pareja> parejas; //Aqui dentro va el coste de cada ciudad. 
+    vector<int> seleccionado;
     float *probabilidades = new float[ciudades.size()];
     
     //Calcular probabilidades de cada ciudad.
@@ -27,15 +34,15 @@ vector<pareja> selectParents(vector<int> ciudades, int num_parejas){
         cout << "Probabilidad de " << i << " -> " << probabilidades[i] << endl;
         suma+=probabilidades[i];
     }   
-    //cout << "Suma: " << suma << endl;
+    
     //Generar numero aleatorio para seleccionar elemento
-    int seleccionado = 0, elemento = 0;
+    int elemento = 0;
     float dado, acumulado;
     bool bandera =false;
     for(int i = 0; i < num_parejas*2; ++i) //Cada pareja tiene dos elementos. 
     {
         //Generar numero aleatorio para seleccionar elemento
-        dado = (float)rand()/RAND_MAX;///(RAND_MAX);
+        dado = (float)rand()/RAND_MAX;
         elemento = 0;
         acumulado = probabilidades[elemento];
         bandera = false;
@@ -44,8 +51,9 @@ vector<pareja> selectParents(vector<int> ciudades, int num_parejas){
             if(dado < acumulado)
             {
                 bandera = true;
-                seleccionado = elemento;
-                cout << "Dado -> " << dado << " seleccionado " << seleccionado << endl;
+                seleccionado.push_back(elemento);
+                cout << "Dado -> " << dado << " seleccionado " << seleccionado.at(i) << endl;
+                cout << RAND_MAX << endl;
             }
             else
             {
@@ -54,6 +62,13 @@ vector<pareja> selectParents(vector<int> ciudades, int num_parejas){
                 
             }
         }
+    }
+    
+    //Agrupamos en parejas los elementos seleccionados.
+    for(int i = 0; i < num_parejas*2; i+=2)
+    {
+        cout << "Pareja -> " << seleccionado[i] << "," << seleccionado[i+1] << endl;
+        parejas.push_back(pareja(seleccionado[i], seleccionado[i+1]));
     }
     
     delete probabilidades;
@@ -71,5 +86,5 @@ int main(int argc, char *argv[]){
     ciudades.push_back(30);
     ciudades.push_back(16);
     
-    parejas = selectParents(ciudades, 3); //Para que devuelva tres parejas. 
+    parejas = selectParents(ciudades, ciudades.size()); //Para que devuelva tres parejas. 
 }

@@ -37,6 +37,17 @@ struct gen{
   {}
 };
 
+struct pareja{
+    int x_, y_;
+    
+    pareja(int x, int y):x_(x), y_(y)
+    {}
+    
+    pareja()
+    {}
+};
+
+
 vector<ciudad> lectura_mapa(const string& nombre)
 {
   ifstream fe("kroA100.tsp");
@@ -128,11 +139,73 @@ double get_best_solution(const vector<gen>& population)
   double result = numeric_limits<double>::max();
   for(unsigned i = 0; i < population.size(); ++i)
   {
+    //cout << "Elemento " << i << " coste -> " << population.at(i).cost_ << endl;
     if(population.at(i).cost_ < result)
       result = population.at(i).cost_; 
   }
 
   return result;
+}
+
+//FALTA ADAPTAR ESTA FUNCION AL CODIGO
+vector<pareja> selectParents(const vector<gen>& genes, int num_parejas){
+    vector<pareja> parejas; //Aqui dentro va el coste de cada ciudad. 
+    vector<int> seleccionado;
+    float *probabilidades = new float[genes.size()];
+    
+    //Calcular probabilidades de cada ciudad.
+    float total = 0; 
+    for(unsigned i = 0; i < genes.size(); ++i)
+        total += genes.at(i).cost_;
+    
+    cout << "Coste total -> " << total << endl;  
+    //Calcular la probabilidad de cada ciudad. 
+    float suma = 0;
+    for(unsigned i = 0; i < genes.size(); ++i)
+    {
+        probabilidades[i] = genes.at(i).cost_/total;
+        cout << "Probabilidad de " << i << " -> " << probabilidades[i] << endl;
+        suma+=probabilidades[i];
+    }   
+    
+    //Generar numero aleatorio para seleccionar elemento
+    int elemento = 0;
+    float dado, acumulado;
+    bool bandera =false;
+    for(int i = 0; i < num_parejas*2; ++i) //Cada pareja tiene dos elementos. 
+    {
+        //Generar numero aleatorio para seleccionar elemento
+        dado = (float)rand()/RAND_MAX;
+        elemento = 0;
+        acumulado = probabilidades[elemento];
+        bandera = false;
+        while(!bandera)
+        {
+            if(dado < acumulado)
+            {
+                bandera = true;
+                seleccionado.push_back(elemento);
+                cout << "Dado -> " << dado << " seleccionado " << seleccionado.at(i) << endl;
+                cout << RAND_MAX << endl;
+            }
+            else
+            {
+                elemento++;
+                acumulado+=probabilidades[elemento];
+                
+            }
+        }
+    }
+    
+    //Agrupamos en parejas los elementos seleccionados.
+    for(int i = 0; i < num_parejas*2; i+=2)
+    {
+        cout << "Pareja -> " << seleccionado[i] << "," << seleccionado[i+1] << endl;
+        parejas.push_back(pareja(seleccionado[i], seleccionado[i+1]));
+    }
+    
+    delete probabilidades;
+    return parejas;    
 }
 
 
@@ -144,16 +217,16 @@ double get_best_solution(const vector<gen>& population)
 int main(){
   string nombre = "kroA100.tsp";
   vector<ciudad> nodos = lectura_mapa(nombre);
-  int population_size = 1000, s_best; //, iteraciones = 0; //Numero de soluciones.
+  int population_size = 10, s_best; //, iteraciones = 0; //Numero de soluciones.
   vector<gen> population = generar_poblacion(population_size, nodos.size());
   evaluate_population(nodos, population);
   s_best = get_best_solution(population);
-
+  cout << s_best << endl;
   
-  int iteraciones = 0;  
-  while(iteraciones < 100) //Condicion de parada
+  int iteraciones = 0;
+  while(iteraciones < 1) //Condicion de parada
   {
-    parents = selectParents(population, population_size);
+    selectParents(population, population_size);
     ++iteraciones;
   }
 }
