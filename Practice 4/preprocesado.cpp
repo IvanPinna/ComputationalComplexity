@@ -123,7 +123,7 @@ void evaluate_population(const vector<ciudad>& ciudades, vector<gen>& poblacion)
 }
 
 
-double get_best_solutionp(const vector<gen>& population)
+double get_best_solution(const vector<gen>& population)
 {
   double result = numeric_limits<double>::max();
   for(unsigned i = 0; i < population.size(); ++i)
@@ -149,13 +149,11 @@ int main(){
   evaluate_population(nodos, population);
   s_best = get_best_solution(population);
 
-  /*
-  //evaluacion(nodos, orden);
+  
+  int iteraciones = 0;  
   while(iteraciones < 100) //Condicion de parada
   {
     parents = selectParents(population, population_size);
     ++iteraciones;
   }
-
-  */
 }

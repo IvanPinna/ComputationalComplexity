@@ -10,5 +10,7 @@ Algoritmo Genético.
 Ventajas 
     - Mayor número de paramétros, lo cuál nos permite adaptar el comportamiento 
     del algoritmo al problema TSP.
+    
 
-Inconvenientes
+Por este motivo decido realizar la implementación del algoritmo genético. Aunque no es tan intuitivo 
+posee mucha flexibilidad a la hora de adaptarse al problema. 
