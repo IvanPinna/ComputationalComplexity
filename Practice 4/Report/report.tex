@@ -1,11 +1,11 @@
 \documentclass{article}
-\usepackage[utf8]{inputenc}
+%\usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage{listings}
+%\usepackage{listings}
 
-\title{Assignement 3}
+\title{Assignement 5}
 \author{Iván Piña Arévalo \\ ivan.pinaarevalo@alum.uca.es}
 \date{\today}
 
@@ -28,7 +28,7 @@
     de encontrar la solución óptima, podemos emplear algoritmos computables que den una aproximación de la solución óptima, es decir, 
     no la mejor solución pero si una lo suficientemente aceptable. 
 
-    En esta práctica, podemos utilizar dos tipos de algoritmos para realizar la aproximación:
+    Podemos utilizar dos tipos de algoritmos para realizar la aproximación:
     \begin{itemize}
         \item Ant Colony Optimisation: Basado en el mecanismo que emplean las hormigas para encontrar la ruta mas corta 
         entre su colonia y posibles comidas. A grandes rasgos podríamos decir que cada hormiga trabajadora va dejando feromonas 
@@ -40,7 +40,7 @@
         dada una función de evaluación saquen una mayor puntuación.)
     \end{itemize}
 
-    He decidido emplear Algoritmos Genéticos para realizar esta práctica. Aunque a simple vista la colonia de hormigas es más 
+    He decidido emplear Algoritmos Genéticos para la aproximación. Aunque a simple vista la colonia de hormigas es más 
     intuitivo, opino que los algoritmos genéticos poseen más mecanismos para adaptar el esquema básico de un algoritmo genético 
     al Travelling Salesman Problem. No obstante también es verdad que el rendimiento de un algoritmo genético se ve seriamente 
     afectado por la configuración de sus paramétros. Consecuencia de esto se podría realizar un estudio que únicamente trate acerca
@@ -50,6 +50,22 @@
 A continuación pasamos a detallar cada una de las partes que componen el algoritmo. Como se podrá observar conforme avance la
 lectura, existen varias partes que son generadas de manera aleatoria (es decir, sin un orden definido). En dichas partes se ha 
 hecho uso de la funcion $rand()$ definida en $<stdlib.h>$
+
+Para llamar la programa debemos pasarle como argumento el nombre del fichero que contiene el mapa. Un ejemplo de llamada es:
+\\ 
+\hspace{5mm} ./a.out $./Maps/eil51.tsp$ 
+
+\subsection{Mapas seleccionados}
+    Dado que para el análisis es suficiente con evaluar 5 mapas, hemos elegido mapas en los que las coordenadas de cada ciudad 
+    sean números enteros. Hemos utilizado los siguientes mapas:
+    \begin{itemize}
+        \item eil51.tsp
+        \item eil76.tsp
+        \item kroaA100.tsp
+        \item eil101.tsp
+        \item a280.tsp
+    \end{itemize}
+
 \subsection{Gen}
     En primer lugar debemos definir lo que van a ser los individuos de la población, llamados genes. Cada gen es una estructura 
     que posee dos campos:
@@ -70,7 +86,7 @@ hecho uso de la funcion $rand()$ definida en $<stdlib.h>$
 
 \subsection{Función de evaluación}
     Hemos empleado la distancia eúclidea. La distancia eúclidea se define como: 
-        \[d(a,b)=\]
+        \[d(P_1,P_2)= \sqrt{ (x_2 - x_1)^2 +(y_2-y_1)^2} \]
     Consecuentemente, el coste o puntuación asignado a un candidato será la suma de las 
     distancias entre una ciudad y su siguiente, mas desde la última ciudad a la primera.  
 
@@ -112,7 +128,8 @@ siguientes pasos:
             \item La ciudad de la madre no esta en el hijo pero la del padre si: Se inserta el ciudad de la madre y se incrementan 
             ambos contadores (para saltar el ciudad del padre que ya esta en el hijo.)
             \item La ciudad del padre y la de la madre están ya en el hijo: En este caso lo único que hay que hacer es Incrementar
-            los contadores de ambos. %¿Este caso puede ocurrir realmente?
+            los contadores de ambos.  Este caso aunque puede parecer raro es más común de lo que parece y ocurre cuando el elemento 
+            al que apunta el padre ya ha sido insertado previamente por la madre y viceversa.%¿Este caso puede ocurrir realmente?
         \end{itemize}
     
     \item Repetir el paso nº2 hasta que todas las ciudades del mapa estén en el hijo. 
@@ -156,14 +173,71 @@ Empleamos dos condiciones de parada:
 \end{itemize}
 
 \section{Results and Discussion}
-A partir de aquí no es necesario traducir.
 %Aquí explica la configuración de los paramétros. 
-La configuración del algoritmo es la siguiente:
+Una posible configuración del algoritmo es esta:
 \begin{itemize}
-    \item Tamaño de la población: 
+    \item Tamaño de la población: 1000 genes
+    \item Número de hijos generados con cada población: 500 genes
+    \item Probabilidad de mutación: 0.9
+    \item Porcentaje de mutación: 0.8 
+    \item Condición de parada: 200 iteraciones. También podriamos emplear que la variación entre el mejor elemento  respecto 
+    a la anterior iteración sea $ < x$ y distinta de cero, pero para el análisis del algoritmo hemos empleado únicamente número 
+    máximo de iteraciones. Si incluimos esta última condición necesitamos modificar x para cada mapa.   
 \end{itemize}
+Con esta configuración alcanzamos unos valores lejanos de cara a la solución óptima de los mapas. Tras modificar los paramétros y reflexionar 
+sobre su comportamiento, el algoritmo se queda tan lejos de la solución principalmente por dos motivos:
+
+\begin{itemize}
+    \item Falta de un estudio previo acerca de los valores óptimos para cada paramétro: Es bien conocido que el resultado de los algoritmos 
+    génetico esta fuertemente acoplado a los valores de sus paramétros. Como todos los paramétros influyen, es necesario un estudio previo acerca 
+    de sus valores ideales.  
+    \item Generalización de los paramétros: Hemos declarado los valores de los paramétros y a continuación hemos ejecutado el  algoritmo sobre 
+    distintos mapas. Cada mapa posee un número distinto de ciudades, así como distinta posición cada ciudad. Por tanto la configuración de 
+    paramétros debería realizarse para cada mapa de manera independiente. 
+\end{itemize}
+
+
+\subsubsection{SCX versus 50\%} 
+Para que el tiempo de ejecución sea representativo, hemos puesto como condición de parada únicamente 
+200 iteraciones. Hemos obtenido los siguientes resultados. 
+%Utiliza un mapa para comparar ambos. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{tiempo.png}
+    \caption{1-eil51 2-eil76 3-kroaA100 4-eil101 5-a280}
+\end{figure}
+
+Observarmos que el tiempo de ejecución es menor en el algoritmo 50\%. Asociamos estos resultados al hecho 
+de que el algoritmo SCX es mas complejo. Tiene que buscar tanto en el padre como en la madre y si ambas 
+ciudades se pueden insertar entonces calcula la ciudad mas cercana a la útima del hijo.  
+Así mismo, si comparamos las puntuaciones obtenidas:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{solutions.png}
+    \caption{1-eil51 2-eil76 3-kroaA100 4-eil101 5-a280}
+\end{figure}
+No disponemos de la solución óptima para el último mapa, por eso no aparece el asterisco verde en la 
+posicion nº 5. 
+Como se puede observar, el operador SCX obtiene mejores soluciones que el operador 50\%. Esto es debido 
+a que SCX si tiene en cuenta la ciudad que es mas cercana respecto a la última ciudad insertada en 
+el hijo (conforme se va creando el hijo.) En cambio el operador 50\% solo tiene en cuenta si puede añadir
+la ciudad o no. 
+
 \section{Conclussion}
-    Como se puede observar... enfoque basto en aleatoriedad, lo que permite abarcar una mayor sección del espacio de estados. 
-    embargo como contrapartida no ahondamos avanzamos lo suficiente hacia los mínimos. 
+    A nivel de operadores, observamos una relación tiempo-resultado. Si necesitamos encontrar 
+    las mejores soluciones de estos dos algoritmos, interesa utilizar el operador SCX a cambio de sacrificar
+    tiempo de computación. En cambio si utilizamos el operador 50\% sabemos que las soluciones serán 
+    peores pero se consumirá menos tiempo de ejecución. 
+
+    Como se puede observar, los resultados del algoritmo no son cercanos a la solución óptima. No obstante, calculamos en un tiempo razonable 
+    una solución para un algoritmo NP-Hard. Bajo mi punto de vista es un gran avance ya que para muchos sistemas (GPS entre ellos) es ideal 
+    pero no necesario encontrar la solución óptima.
+    
+    Así mismo, aunque no cambiaría el orden actual del algoritmo, se podría mejorar aún más el tiempo 
+    de ejecución si paralelizasemos determinadas partes del algoritmo, por ejemplo la generación de parejas y la generación de hijos. Gracias 
+    a las directivas de paralelización de C++ y el aumento en el número de núcleos del procesador, esta opción no es nada despreciable. 
+    %... enfoque basto en aleatoriedad, lo que permite abarcar una mayor sección del espacio de estados. 
+    %embargo como contrapartida no ahondamos avanzamos lo suficiente hacia los mínimos. 
 \section{Bibliography}
 \end{document}
