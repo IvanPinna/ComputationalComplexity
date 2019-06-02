@@ -69,7 +69,7 @@ struct gen{
   {
     for(int i = 0; i < sequence_.size() - 1; ++i)
       cout << sequence_.at(i) << ",";
-    cout << sequence_.at(sequence.size()-1) << endl;
+    cout << sequence_.at(sequence_.size()-1) << endl;
   }
 };
 
@@ -108,7 +108,6 @@ vector<ciudad> lectura_mapa(const string& nombre)
       y = stoi((*(++it)).str());
       
       ciudades.push_back(ciudad(id, x, y));
-      //ciudades.at(contador).imprimir();
       getline(fe, str);
       ++contador;
     }
@@ -177,7 +176,6 @@ void evaluate_population(const vector<ciudad>& ciudades, vector<gen>& poblacion)
 
 gen get_best_solution(const vector<gen>& population)
 {
-  //double result = numeric_limits<double>::max();
   gen result;
   result.cost_ =  numeric_limits<double>::max();
   
@@ -193,7 +191,7 @@ gen get_best_solution(const vector<gen>& population)
 
 
 vector<pareja> selectParents(const vector<gen>& genes, int num_parejas){
-    vector<pareja> parejas; //Aqui dentro va el coste de cada ciudad. 
+    vector<pareja> parejas;  
     vector<int> seleccionado;
     float *probabilidades = new float[genes.size()];
     
@@ -270,7 +268,7 @@ gen SCX(const gen& padre, const gen& madre, const vector<ciudad>& ciudades)
 	if(euclidea(ciudades.at(hijo.at(hijo.size()-1)), ciudades.at(padre.at(c_padre))) <
 	   euclidea(ciudades.at(hijo.at(hijo.size()-1)), ciudades.at(madre.at(c_madre))))
         {
-	    //cout << "Ambos no estan, insertando padre ->" << padre.at(c_padre) << endl; 
+	  //cout << "Ambos no estan, insertando padre ->" << padre.at(c_padre) << endl; 
 	  hijo.push_back(padre.at(c_padre));
 	  if(c_padre < limite)
 	    c_padre++;
@@ -324,6 +322,7 @@ gen SCX(const gen& padre, const gen& madre, const vector<ciudad>& ciudades)
     return hijo;    
 }
 
+//Operador de cruce 50%
 gen splitter(const gen& padre, const gen& madre)
 {
   int contador = 0;
@@ -369,6 +368,10 @@ void mutation(gen& candidato, float probabilidad, float porcentaje)
   }
 }
 
+/*
+Recibe la actual población y los hijos. Devuelve la nueva población
+resultante.
+*/
 vector<gen> replace(const vector<gen>& population, const vector<gen>& hijos)
 {
   //Volcar todos los elementos en el resultado
@@ -385,24 +388,6 @@ vector<gen> replace(const vector<gen>& population, const vector<gen>& hijos)
   }
 
   //cout << "Tamaño población " << resultado.size() << endl;
-  return resultado;
-}
-
-vector<gen> replace_elitist(const vector<gen>& population, const vector<gen>& hijos)
-{
-  //Volcar todos los elementos en el resultado
-  vector<gen> resultado(population);
-  int dado;
-  for(int i = 0; i < hijos.size(); ++i)
-    resultado.push_back(hijos.at(i));
-
-  //Eliminar elementos hasta que tenga el tamaño de la población
-  while(resultado.size() > population.size())
-  {
-    dado = rand()%resultado.size();
-    resultado.erase(resultado.begin()+(dado));
-  }
-  
   return resultado;
 }
 
@@ -462,7 +447,7 @@ int main(int argc, char *argcv[]){
 
   a = clock() - a; 
   cout << "iteraciones -> " << iteraciones << endl;
-  cout << "Tiempo -> " << (float)a/CLOCKS_PER_SEC << endl;
+  cout << "Tiempo -> " << (float)a/CLOCKS_PER_SEC << " segundos" <<  endl;
   cout << "s_best = " << s_best.cost_ << endl;
   cout << "orden de las ciudades de s_best" << endl;
   s_best.show();
