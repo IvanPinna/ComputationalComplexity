@@ -79,19 +79,22 @@ struct pareja{
 
 vector<ciudad> lectura_mapa(const string& nombre)
 {
-  ifstream fe("kroA100.tsp");
-  string str;
-  regex reg("[0-9]+");
-  regex endfile("EOF");
-  sregex_iterator end;
-  int contador = 0, id, tope;
   vector<ciudad> ciudades;
-  float x, y;
+  try{
+    ifstream fe(nombre);//"kroA100.tsp");
+  
+    string str;
+    regex reg("[0-9]+");
+    regex endfile("EOF");
+    sregex_iterator end;
+    int contador = 0, id, tope;
     
-  for(int i = 0; i < 7; ++i) //Burn the first six lines
-    getline(fe, str);
+    float x, y;
+    
+    for(int i = 0; i < 7; ++i) //Burn the first six lines
+      getline(fe, str);
 
-  while(!regex_search(str, endfile)){
+    while(!regex_search(str, endfile)){
       sregex_iterator it(str.begin(), str.end(), reg);
       id =  stoi((*it).str()); 
       x =  stoi((*(++it)).str());  
@@ -103,7 +106,9 @@ vector<ciudad> lectura_mapa(const string& nombre)
       ++contador;
     }
     
-  fe.close();
+    fe.close();
+  }catch(exception e){throw std::invalid_argument( "fichero no existe" );}
+  
   return ciudades;
 }
 
@@ -186,15 +191,13 @@ vector<pareja> selectParents(const vector<gen>& genes, int num_parejas){
     float total = 0; 
     for(unsigned i = 0; i < genes.size(); ++i)
         total += genes.at(i).cost_;
-    
-    //cout << "Coste total -> " << total << endl;  
+      
     //Calcular la probabilidad de cada ciudad. 
     float suma = 0;
     for(unsigned i = 0; i < genes.size(); ++i)
     {
         probabilidades[i] = genes.at(i).cost_/total;
-        //cout << "Probabilidad de " << i << " -> " << probabilidades[i] << endl;
-        suma+=probabilidades[i];
+	suma+=probabilidades[i];
     }   
     
     //Generar numero aleatorio para seleccionar elemento
@@ -208,19 +211,20 @@ vector<pareja> selectParents(const vector<gen>& genes, int num_parejas){
         elemento = 0;
         acumulado = probabilidades[elemento];
         bandera = false;
+	
         while(!bandera)
         {
-            if(dado < acumulado)
-            {
-                bandera = true;
-                seleccionado.push_back(elemento);
-            }
-            else
-            {
-                elemento++;
-                acumulado+=probabilidades[elemento];
-                
-            }
+	  if(dado < acumulado || elemento == (genes.size() -1))
+          {
+	    bandera = true;
+	    seleccionado.push_back(elemento);
+	  }
+	  else
+	  {
+	    elemento++;
+	    acumulado+=probabilidades[elemento]; //Aquí esta generando una excepcion.
+            
+	  }
         }
     }
     
@@ -242,75 +246,71 @@ gen SCX(const gen& padre, const gen& madre, const vector<ciudad>& ciudades)
     
     hijo.push_back(padre.at(0));
     ++c_padre;
-    int iter = 0;
+    int iter = 0, limite = padre.size()-1;
     bool bandera;
     while(hijo.size() < padre.size())
     {
       ++iter;
-        it_p = find(hijo.begin(), hijo.end(), padre.at(c_padre));
-        it_m = find(hijo.begin(), hijo.end(), madre.at(c_madre));
-
-        if(it_p == hijo.sequence_.end() and it_m == hijo.sequence_.end())
+      it_p = find(hijo.begin(), hijo.end(), padre.at(c_padre));
+      it_m = find(hijo.begin(), hijo.end(), madre.at(c_madre));
+      
+      if(it_p == hijo.sequence_.end() and it_m == hijo.sequence_.end())
+      {
+	//Buscamos el que esta más cerca. 
+	if(euclidea(ciudades.at(hijo.at(hijo.size()-1)), ciudades.at(padre.at(c_padre))) <
+	   euclidea(ciudades.at(hijo.at(hijo.size()-1)), ciudades.at(madre.at(c_madre))))
         {
-	  //Buscamos el que esta más cerca. 
-	  if(euclidea(ciudades.at(hijo.at(hijo.size()-1)), ciudades.at(padre.at(c_padre))) <
-	     euclidea(ciudades.at(hijo.at(hijo.size()-1)), ciudades.at(madre.at(c_madre))))
-          {
 	    //cout << "Ambos no estan, insertando padre ->" << padre.at(c_padre) << endl; 
-	    hijo.push_back(padre.at(c_padre));
-	    if(c_padre < 99)
-	      c_padre++;
-	  }
-	  else
-          {
-	    //cout << "Ambos no estan, insertando madre ->" << madre.at(c_madre) << endl;
-	    hijo.push_back(madre.at(c_madre));
-	    if(c_madre < 99)
-	      c_madre++;
-	  }
-        }
-        else
-        {
-	  bandera = false; 
-            if(it_p == hijo.sequence_.end())
-            {
-	      //cout << "Insertando elemento del padre ->  " << padre.at(c_padre) << endl;
-	      hijo.push_back(padre.at(c_padre));
-	      if(c_madre < 99)
-		c_madre++;
-	      if(c_padre < 99)
-		c_padre++;
-	      bandera = true;
-	      
-            }
-	    
-            if(it_m == hijo.sequence_.end() and !bandera)
-	    {
-	      //cout << "Insertando elemento de la madre -> " << madre.at(c_madre) << endl;
-	      hijo.push_back(madre.at(c_madre));
-	      if(c_madre < 99)
-		c_madre++;
-	      if(c_padre < 99)
-		c_padre++;
-	      bandera = true;
-            }
-
-	    //Padre y madre ya están en el hijo, se avanza. 
-	    if(it_p != hijo.sequence_.end() and it_m != hijo.end() and !bandera)
-	    {
-	      if(c_madre < 99)
-		c_madre++;
-	      if(c_padre < 99)
-		c_padre++;
-	      bandera = true;
-	    }
+	  hijo.push_back(padre.at(c_padre));
+	  if(c_padre < limite)
+	    c_padre++;
 	}
+	else
+        {
+	  //cout << "Ambos no estan, insertando madre ->" << madre.at(c_madre) << endl;
+	  hijo.push_back(madre.at(c_madre));
+	  if(c_madre < limite)
+	    c_madre++;
+	}
+      }
+      else
+      {
+	bandera = false; 
+	if(it_p == hijo.sequence_.end())
+	{
+	  //cout << "Insertando elemento del padre ->  " << padre.at(c_padre) << endl;
+	  hijo.push_back(padre.at(c_padre));
+	  if(c_madre < limite)
+	    c_madre++;
+	  if(c_padre < limite)
+	    c_padre++;
+	  bandera = true;
+	  
+	}
+	
+	if(it_m == hijo.sequence_.end() and !bandera)
+	{
+	  //cout << "Insertando elemento de la madre -> " << madre.at(c_madre) << endl;
+	  hijo.push_back(madre.at(c_madre));
+	  if(c_madre < limite)
+	    c_madre++;
+	  if(c_padre < limite)
+	    c_padre++;
+	  bandera = true;
+	}
+
+	//Padre y madre ya están en el hijo, se avanza. 
+	if(it_p != hijo.sequence_.end() and it_m != hijo.end() and !bandera)
+	{
+	  if(c_madre < limite)
+	    c_madre++;
+	  if(c_padre < limite)
+	    c_padre++;
+	  bandera = true;
+	}
+      }
     }
 
-    /*
-    for(int i = 0; i < hijo.size(); ++i)
-        cout << hijo.at(i) << endl;
-    */
     return hijo;    
 }
 
@@ -403,36 +403,42 @@ vector<gen> replace_elitist(const vector<gen>& population, const vector<gen>& hi
  condicion de parada -> 100 iteraciones
 ***/
 int main(){
-  string nombre = "kroA100.tsp";
+  string nombre = "./Maps/eil51.tsp";
   vector<ciudad> nodos = lectura_mapa(nombre);
-  int population_size = 1000, s_best; //, iteraciones = 0; //Numero de soluciones.
+  int population_size = 1000, s_best, s_bestold = 0, diferencia; //, iteraciones = 0; //Numero de soluciones.
   vector<gen> population = generar_poblacion(population_size, nodos.size());
   evaluate_population(nodos, population);
   s_best = get_best_solution(population);
-  //cout << s_best << endl;
-  
+  //cout << "a" << endl;
   int iteraciones = 0;
   vector<pareja> parejas;
   vector<gen> hijos;
   gen hijo;
-  while(iteraciones < 200) //Condicion de parada
+  while(iteraciones < 200)// && abs(diferencia) > 50) //Condicion de parada
   {
+    s_bestold = s_best;
     hijos.clear(); //Resetear hijos
-    parejas = selectParents(population, population_size); 
+    parejas = selectParents(population, population_size);
+    //cout << "b" << endl;
     for(unsigned i = 0; i < parejas.size();++i) //Para generar 50% de hijos
     {
       hijo = SCX(population.at(parejas.at(i).x_),
 		 population.at(parejas.at(i).y_), nodos);
-
+      //cout << "c" << endl;
       mutation(hijo, 0.9, 0.8);
+      //cout << "d" << endl;
       hijos.push_back(hijo); //Añadimos el hijo a la poblacion de hijos. 
     }
-
+    //cout << "e" << endl;
     population = replace(population, hijos);
+    //cout << "f" << endl;
     //Explicar por qué evaluas después. 
     evaluate_population(nodos, population); //Evalúa cada hijo. 
+    //cout << "g" << endl;
     s_best = get_best_solution(population);
     ++iteraciones;
+    cout << "Iteraciones -> " << iteraciones << endl;
+    diferencia =  s_bestold - s_best;
   }
   cout << "iteraciones -> " << iteraciones << endl;
 
